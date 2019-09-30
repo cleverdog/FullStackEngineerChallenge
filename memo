@@ -1,0 +1,39 @@
+Admin view
+    Add/remove/update/view employees
+    Add/update/view performance reviews
+    Assign employees to participate in another employee's performance review
+
+Employee view
+    List of performance reviews requiring feedback
+    Submit feedback
+
+Component
+    admin/employees
+    admin/reviews
+
+    employee/feedbacks
+
+DB
+    employees -> ID / Name / 
+        => Ref: feedback -> employeeID
+    reviewResults -> ID / employeeID / R1 / R2 / R3 / R4 / R5 / R6
+    feedback -> ID / comment
+        => Ref: feedbacker -> employeeID
+           Ref: employee -> employeeID
+
+    reviews =>
+        R1:Quality and accuracy of work.
+        R2:Ability to meet established goals and deadlines.
+        R3:Communication skills.
+        R4:Collaboration skills and teamwork.
+        R5:Problem-solving skills.
+        R6:Attendance and dependability.
+
+
+
+==========================
+Name samples
+ -> https://www.linkedin.com/pulse/20140806003615-11158662-sample-list-of-50-real-names-useful-for-mockups/
+
+Feedback Comment samples
+ -> https://status.net/articles/performance-review-phrases-examples/
