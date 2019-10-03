@@ -6,10 +6,6 @@ import { EmployeesComponent } from './employees/employees.component';
 const routes: Routes = [
   {
     path: '',
-    component: AdminComponent
-  },
-  {
-    path: 'employees',
     loadChildren: () =>
       import('./employees/employees.module').then(m => m.EmployeesModule)
   }
