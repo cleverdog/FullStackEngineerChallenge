@@ -1,16 +1,21 @@
-import { NgModule } from "@angular/core";
-import { Routes, RouterModule } from "@angular/router";
-import { AdminComponent } from "./admin.component";
-import { EmployeesComponent } from "./employees/employees.component";
-import { ReviewsComponent } from "./reviews/reviews.component";
+import { NgModule } from '@angular/core';
+import { Routes, RouterModule } from '@angular/router';
+import { AdminComponent } from './admin.component';
+import { EmployeesComponent } from './employees/employees.component';
+import { ReviewsComponent } from './reviews/reviews.component';
 
 const routes: Routes = [
   {
-    path: "admin",
+    path: '',
     component: AdminComponent
   },
   {
-    path: "admin/reviews",
+    path: 'employees',
+    loadChildren: () =>
+      import('./employees/employees.module').then(m => m.EmployeesModule)
+  },
+  {
+    path: 'reviews',
     component: ReviewsComponent
   }
 ];

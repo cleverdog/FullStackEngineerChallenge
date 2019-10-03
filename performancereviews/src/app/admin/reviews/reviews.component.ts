@@ -1,14 +1,12 @@
-import { Component, OnInit } from "@angular/core";
+import { Component, OnInit } from '@angular/core';
 
 @Component({
-  selector: "app-reviews",
-  templateUrl: "./reviews.component.html",
-  styleUrls: ["./reviews.component.sass"]
+  selector: 'app-reviews',
+  templateUrl: './reviews.component.html',
+  styleUrls: ['./reviews.component.sass']
 })
 export class ReviewsComponent implements OnInit {
   constructor() {}
 
-  ngOnInit() {
-    console.log(123);
-  }
+  ngOnInit() {}
 }

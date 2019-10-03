@@ -1,3 +1,163 @@
-<p>
-  employees works!
-</p>
+<div
+  fxLayout="row wrap"
+  fxLayoutAlign="flex-start"
+  *ngIf="items | async as items"
+>
+  <mat-card mat-button class="personal-card add-personal-card" fxFlex="23">
+    <mat-card-content>
+      <button mat-icon-button aria-label="" (click)="createNewEmployee()">
+        <strong>Add employee</strong><br />
+        <mat-icon>control_point</mat-icon>
+      </button>
+    </mat-card-content></mat-card
+  >
+  <mat-card
+    mat-button
+    class="personal-card"
+    *ngFor="let item of items"
+    fxFlex="23"
+  >
+    <mat-card-header>
+      <mat-card-title>
+        <strong
+          >{{ item.Name }}
+          <mat-icon (click)="changeEmployeeName(item.Name, item.id)"
+            >edit</mat-icon
+          ></strong
+        >
+      </mat-card-title>
+    </mat-card-header>
+    <mat-card-content>
+      <mat-accordion>
+        <mat-expansion-panel>
+          <mat-expansion-panel-header>
+            <mat-panel-title>
+              Performance Reviews
+            </mat-panel-title>
+          </mat-expansion-panel-header>
+
+          <mat-form-field>
+            <input
+              class="full-width"
+              matInput
+              type="number"
+              step="0.5"
+              placeholder="#1"
+              min="0"
+              max="5"
+            />
+            <mat-hint align="start">Quality and accuracy of work.</mat-hint>
+          </mat-form-field>
+
+          <mat-form-field>
+            <input
+              class="full-width"
+              matInput
+              type="number"
+              step="0.5"
+              placeholder="#2"
+              min="0"
+              max="5"
+            />
+            <mat-hint align="start"
+              >Ability to meet established deadlines.</mat-hint
+            >
+          </mat-form-field>
+
+          <mat-form-field>
+            <input
+              class="full-width"
+              matInput
+              type="number"
+              step="0.5"
+              placeholder="#3"
+              min="0"
+              max="5"
+            />
+            <mat-hint align="start">Communication skills.</mat-hint>
+          </mat-form-field>
+
+          <mat-form-field>
+            <input
+              class="full-width"
+              matInput
+              type="number"
+              step="0.5"
+              placeholder="#4"
+              min="0"
+              max="5"
+            />
+            <mat-hint align="start"
+              >Collaboration skills and teamwork.</mat-hint
+            >
+          </mat-form-field>
+
+          <mat-form-field>
+            <input
+              class="full-width"
+              matInput
+              type="number"
+              step="0.5"
+              placeholder="#5"
+              min="0"
+              max="5"
+            />
+            <mat-hint align="start">Problem-solving skills.</mat-hint>
+          </mat-form-field>
+
+          <mat-form-field>
+            <input
+              class="full-width"
+              matInput
+              type="number"
+              step="0.5"
+              placeholder="#6"
+              min="0"
+              max="5"
+            />
+            <mat-hint align="start">Attendance and dependability.</mat-hint>
+          </mat-form-field>
+          <div class="button-wrapper">
+            <button mat-flat-button color="primary">Apply</button>
+          </div>
+        </mat-expansion-panel>
+        <mat-expansion-panel
+          (opened)="panelOpenState = true"
+          (closed)="panelOpenState = false"
+        >
+          <mat-expansion-panel-header>
+            <mat-panel-title>
+              Assign employees
+            </mat-panel-title>
+          </mat-expansion-panel-header>
+
+          <mat-form-field>
+            <mat-label>Employees</mat-label>
+            <mat-select multiple>
+              <mat-option *ngFor="let item of items" [value]="item">{{
+                item.Name
+              }}</mat-option>
+            </mat-select>
+          </mat-form-field>
+          <div class="button-wrapper">
+            <button mat-flat-button color="primary">Apply</button>
+          </div>
+        </mat-expansion-panel>
+      </mat-accordion>
+    </mat-card-content>
+    <mat-card-actions>
+      <div fxLayout="row wrap" fxLayoutAlign="space-between">
+        <div fxFlex="70"></div>
+        <button
+          mat-icon-button
+          color="warn"
+          aria-label=""
+          fxFlex="20"
+          (click)="delete(item.id)"
+        >
+          <mat-icon>delete_outline</mat-icon>
+        </button>
+      </div>
+    </mat-card-actions>
+  </mat-card>
+</div>
