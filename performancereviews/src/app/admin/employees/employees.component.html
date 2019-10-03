@@ -182,21 +182,27 @@
         >
           <mat-expansion-panel-header>
             <mat-panel-title>
-              Assign employees
+              Assign employees for review
             </mat-panel-title>
           </mat-expansion-panel-header>
-
-          <mat-form-field>
-            <mat-label>Employees</mat-label>
-            <mat-select multiple>
-              <mat-option *ngFor="let item of items" [value]="item">{{
-                item.Name
-              }}</mat-option>
-            </mat-select>
-          </mat-form-field>
-          <div class="button-wrapper">
-            <button mat-flat-button color="primary">Apply</button>
+          <div class="reviewers" *ngIf="item.reviewers; else addReviewers">
+            <mat-list role="list" *ngFor="let reviewer of item.reviewers">
+              <mat-list-item role="listitem">
+                {{ users[reviewer] }}
+              </mat-list-item>
+            </mat-list>
           </div>
+          <ng-template #addReviewers>
+            <div class="button-wrapper">
+              <button
+                mat-flat-button
+                color="primary"
+                (click)="addReviewer(item.id)"
+              >
+                Add Reviewer
+              </button>
+            </div>
+          </ng-template>
         </mat-expansion-panel>
       </mat-accordion>
     </mat-card-content>

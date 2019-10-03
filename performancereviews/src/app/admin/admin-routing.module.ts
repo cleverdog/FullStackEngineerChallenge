@@ -2,7 +2,6 @@ import { NgModule } from '@angular/core';
 import { Routes, RouterModule } from '@angular/router';
 import { AdminComponent } from './admin.component';
 import { EmployeesComponent } from './employees/employees.component';
-import { ReviewsComponent } from './reviews/reviews.component';
 
 const routes: Routes = [
   {
@@ -13,10 +12,6 @@ const routes: Routes = [
     path: 'employees',
     loadChildren: () =>
       import('./employees/employees.module').then(m => m.EmployeesModule)
-  },
-  {
-    path: 'reviews',
-    component: ReviewsComponent
   }
 ];
 

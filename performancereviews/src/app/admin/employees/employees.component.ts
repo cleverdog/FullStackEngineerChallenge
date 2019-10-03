@@ -31,6 +31,10 @@ export interface Rate {
   value: number;
 }
 
+export interface ReviewerDialogData {
+  employeeID: string;
+}
+
 @Component({
   selector: 'app-employees',
   templateUrl: './employees.component.html',
@@ -43,6 +47,8 @@ export class EmployeesComponent implements OnInit {
   reviewId: string;
   review: any;
   changeNameID = '';
+
+  users = {};
 
   constructor(
     private db: AngularFirestore,
@@ -86,6 +92,18 @@ export class EmployeesComponent implements OnInit {
     });
   }
 
+  addReviewer(EmployeeID): void {
+    const dialogRef = this.dialog.open(ReviewerDialog, {
+      disableClose: true,
+      width: '500px',
+      data: { employeeID: EmployeeID }
+    });
+
+    dialogRef.afterClosed().subscribe(result => {
+      console.log('The dialog was closed');
+    });
+  }
+
   ngOnInit() {
     this.items = this.db
       .collection('employees')
@@ -96,6 +114,7 @@ export class EmployeesComponent implements OnInit {
             const data = a.payload.doc.data();
             const id = a.payload.doc.id;
             console.log({ id, ...data });
+            this.users[id] = data['Name'];
             return { id, ...data };
           });
         })
@@ -139,21 +158,7 @@ export class EmployeesComponent implements OnInit {
     return size + '%';
   }
 
-  getreview(employeeId) {
-    this.db
-      .collection('reviewResults')
-      .snapshotChanges()
-      .pipe(
-        map(actions => {
-          return actions.map(a => {
-            const data = a.payload.doc.data();
-            const id = a.payload.doc.id;
-            console.log({ id, ...data });
-            return { id, ...data };
-          });
-        })
-      );
-  }
+  async getUsername(id) {}
 }
 
 @Component({
@@ -231,7 +236,7 @@ export class EmployeeNameDialog {
 }
 
 @Component({
-  selector: 'employee-name-dialog',
+  selector: 'rating-dialog',
   template: `
     <h1 mat-dialog-title>Select the rating</h1>
     <div mat-dialog-content>
@@ -402,5 +407,89 @@ export class ReviewDialog {
           this.dialogRef.close();
         });
     }
+  }
+}
+
+@Component({
+  selector: 'add-reviewer-dialog',
+  template: `
+    <h1 mat-dialog-title>Add Reviewer</h1>
+    <div mat-dialog-content>
+      <form [formGroup]="reviewerForm">
+        <mat-form-field>
+          <mat-label>Employees</mat-label>
+          <mat-select
+            multiple
+            *ngIf="items | async as items"
+            formControlName="reviewers"
+          >
+            <mat-option *ngFor="let item of items" [value]="item">{{
+              item.Name
+            }}</mat-option>
+          </mat-select>
+        </mat-form-field>
+      </form>
+    </div>
+    <div mat-dialog-actions>
+      <button mat-button (click)="onCancelClick()">Cancel</button>
+      <button mat-button (click)="onCreateClick()" color="primary">
+        Apply
+      </button>
+    </div>
+  `
+})
+export class ReviewerDialog {
+  items: Observable<any[]>;
+
+  constructor(
+    private db: AngularFirestore,
+    private fb: FormBuilder,
+    public dialogRef: MatDialogRef<ReviewerDialog>,
+    @Inject(MAT_DIALOG_DATA) public data: ReviewerDialogData
+  ) {}
+
+  public reviewerForm = new FormGroup({
+    reviewers: new FormControl('', [])
+  });
+
+  ngOnInit() {
+    this.items = this.db
+      .collection('employees')
+      .snapshotChanges()
+      .pipe(
+        map(actions => {
+          return actions.map(a => {
+            const data = a.payload.doc.data();
+            const id = a.payload.doc.id;
+            console.log({ id, ...data });
+            return { id, ...data };
+          });
+        })
+      );
+  }
+
+  onCancelClick(): void {
+    this.dialogRef.close();
+  }
+  onCreateClick() {
+    let value = this.reviewerForm.value;
+    console.log(value.reviewers);
+    const reviewers = [];
+    for (let index = 0; index < value.reviewers.length; index++) {
+      reviewers.push(value.reviewers[index]['id']);
+      // let addDoc = this.db
+      //   .collection('reviewResults')
+      //   .add({
+      //     employeeID: this.data.employeeID,
+      //     reviewer: value.reviewers[index]['id']
+      //   })
+      //   .then(ref => {
+      //     console.log('Added document with ID: ', ref.id);
+      //   });
+    }
+    console.log(reviewers);
+    let employeeRef = this.db.collection('employees').doc(this.data.employeeID);
+    let updateSingle = employeeRef.update({ reviewers: reviewers });
+    this.dialogRef.close();
   }
 }

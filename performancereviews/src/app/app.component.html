@@ -1,20 +1,10 @@
 <mat-toolbar>
   <mat-toolbar-row>
-    <ng-template ngFor let-item [ngForOf]="menus" let-i="index">
-      <button
-        mat-icon-button
-        routerLink="/admin/{{ item.text }}"
-        matTooltip="{{ item.text }}"
-      >
-        <mat-icon mat-button aria-hidden="false">{{ item.icon }}</mat-icon>
-      </button>
-    </ng-template>
     <span class="toolbar-spacer"></span>
     <h1>
       {{ title }}
     </h1>
     <span class="toolbar-spacer"></span>
-    <small>{{ role }} Role</small>
   </mat-toolbar-row>
 </mat-toolbar>
 

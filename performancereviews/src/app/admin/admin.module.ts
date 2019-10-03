@@ -1,13 +1,9 @@
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
-
 import { AngularFireModule } from '@angular/fire';
-import { AngularFirestore } from '@angular/fire/firestore';
 import { environment } from '../../environments/environment';
-
 import { AdminRoutingModule } from './admin-routing.module';
 import { AdminComponent } from './admin.component';
-import { ReviewsComponent } from './reviews/reviews.component';
 
 import {
   MatCardModule,
@@ -18,7 +14,7 @@ import { FlexLayoutModule } from '@angular/flex-layout';
 import { ReactiveFormsModule } from '@angular/forms';
 
 @NgModule({
-  declarations: [AdminComponent, ReviewsComponent],
+  declarations: [AdminComponent],
   imports: [
     CommonModule,
     AdminRoutingModule,

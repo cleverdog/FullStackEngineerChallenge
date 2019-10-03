@@ -1,6 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { ActivatedRoute, Router, NavigationStart } from '@angular/router';
-import { filter, map } from 'rxjs/operators';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-root',
@@ -14,35 +13,5 @@ export class AppComponent implements OnInit {
 
   constructor(private router: Router) {}
 
-  async ngOnInit() {
-    this.router.events
-      .pipe(
-        filter(event => {
-          return event instanceof NavigationStart;
-        })
-      )
-      .subscribe((event: NavigationStart) => {
-        if (event.url.startsWith('/admin')) {
-          this.role = 'admin';
-          this.menus = [
-            {
-              text: 'employees',
-              icon: 'people'
-            },
-            {
-              text: 'reviews',
-              icon: 'star'
-            }
-          ];
-        }
-        if (event.url.startsWith('/employee')) {
-          this.role = 'employee';
-          this.menus = [
-            {
-              text: 'feedbacks'
-            }
-          ];
-        }
-      });
-  }
+  async ngOnInit() {}
 }

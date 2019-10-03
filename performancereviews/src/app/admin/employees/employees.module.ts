@@ -2,11 +2,12 @@ import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 
 import { EmployeesRoutingModule } from './employees-routing.module';
-import { DetailComponent } from './detail/detail.component';
+
 import {
   EmployeesComponent,
   EmployeeNameDialog,
-  ReviewDialog
+  ReviewDialog,
+  ReviewerDialog
 } from './employees.component';
 
 import {
@@ -17,7 +18,8 @@ import {
   MatInputModule,
   MatExpansionModule,
   MatSelectModule,
-  MatDialogModule
+  MatDialogModule,
+  MatListModule
 } from '@angular/material';
 import { FlexLayoutModule } from '@angular/flex-layout';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
@@ -25,9 +27,9 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 @NgModule({
   declarations: [
     EmployeesComponent,
-    DetailComponent,
     EmployeeNameDialog,
-    ReviewDialog
+    ReviewDialog,
+    ReviewerDialog
   ],
   imports: [
     CommonModule,
@@ -42,8 +44,9 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
     MatInputModule,
     MatExpansionModule,
     MatSelectModule,
-    MatDialogModule
+    MatDialogModule,
+    MatListModule
   ],
-  entryComponents: [EmployeeNameDialog, ReviewDialog]
+  entryComponents: [EmployeeNameDialog, ReviewDialog, ReviewerDialog]
 })
 export class EmployeesModule {}
