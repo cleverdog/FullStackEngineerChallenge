@@ -5,7 +5,8 @@ import { EmployeesRoutingModule } from './employees-routing.module';
 import { DetailComponent } from './detail/detail.component';
 import {
   EmployeesComponent,
-  DialogOverviewExampleDialog
+  EmployeeNameDialog,
+  ReviewDialog
 } from './employees.component';
 
 import {
@@ -25,7 +26,8 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
   declarations: [
     EmployeesComponent,
     DetailComponent,
-    DialogOverviewExampleDialog
+    EmployeeNameDialog,
+    ReviewDialog
   ],
   imports: [
     CommonModule,
@@ -42,6 +44,6 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
     MatSelectModule,
     MatDialogModule
   ],
-  entryComponents: [DialogOverviewExampleDialog]
+  entryComponents: [EmployeeNameDialog, ReviewDialog]
 })
 export class EmployeesModule {}

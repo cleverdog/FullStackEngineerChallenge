@@ -14,11 +14,21 @@ import {
   Validators,
   FormControl
 } from '@angular/forms';
+import * as _ from 'lodash';
 
-export interface DialogData {
+export interface EmployeeNameDialogData {
   name: string;
   id: string;
   text: string;
+}
+
+export interface ReviewDialogData {
+  employeeID: string;
+  reviewID: string;
+}
+
+export interface Rate {
+  value: number;
 }
 
 @Component({
@@ -32,7 +42,6 @@ export class EmployeesComponent implements OnInit {
   panelOpenState = false;
   reviewId: string;
   review: any;
-  reviewItemsCount = 0;
   changeNameID = '';
 
   constructor(
@@ -42,7 +51,8 @@ export class EmployeesComponent implements OnInit {
   ) {}
 
   createNewEmployee(): void {
-    const dialogRef = this.dialog.open(DialogOverviewExampleDialog, {
+    const dialogRef = this.dialog.open(EmployeeNameDialog, {
+      disableClose: true,
       width: '250px',
       data: { text: 'Add New Employee' }
     });
@@ -53,9 +63,22 @@ export class EmployeesComponent implements OnInit {
   }
 
   changeEmployeeName(Name, EmployeeID): void {
-    const dialogRef = this.dialog.open(DialogOverviewExampleDialog, {
+    const dialogRef = this.dialog.open(EmployeeNameDialog, {
+      disableClose: true,
       width: '250px',
       data: { name: Name, id: EmployeeID, text: 'Edit Employee Name' }
+    });
+
+    dialogRef.afterClosed().subscribe(result => {
+      console.log('The dialog was closed');
+    });
+  }
+
+  editReview(EmployeeID, ReviewID): void {
+    const dialogRef = this.dialog.open(ReviewDialog, {
+      disableClose: true,
+      width: '500px',
+      data: { employeeID: EmployeeID, reviewID: ReviewID }
     });
 
     dialogRef.afterClosed().subscribe(result => {
@@ -72,26 +95,20 @@ export class EmployeesComponent implements OnInit {
           return actions.map(a => {
             const data = a.payload.doc.data();
             const id = a.payload.doc.id;
+            console.log({ id, ...data });
+            return { id, ...data };
+          });
+        })
+      );
 
-            var reviewRef = this.db.collection('reviewResults', ref =>
-              ref.where('employeeID', '==', id)
-            );
-            reviewRef
-              .get()
-              .toPromise()
-              .then(snapshot => {
-                snapshot.forEach(doc => {
-                  this.review = doc.data();
-                  this.reviewId = doc.id;
-                  console.log(this.reviewItemsCount);
-                  this.reviewItems[this.reviewItemsCount]['reviewID'] = doc.id;
-                  this.reviewItemsCount++;
-                });
-              })
-              .catch(err => {
-                console.log('Error getting documents', err);
-              });
-
+    this.reviewItems = this.db
+      .collection('reviewResults')
+      .snapshotChanges()
+      .pipe(
+        map(actions => {
+          return actions.map(a => {
+            const data = a.payload.doc.data();
+            const id = a.payload.doc.id;
             console.log({ id, ...data });
             return { id, ...data };
           });
@@ -99,11 +116,13 @@ export class EmployeesComponent implements OnInit {
       );
   }
 
-  async delete(employeeId) {
+  async delete(employeeId, reviewID) {
     if (confirm('Are you sure you want to delete?')) {
       try {
         await this.db.doc(`employees/${employeeId}`).delete();
-        // this.db.doc(`reviewResults/${this.reviewId}`).delete();
+        if (reviewID) {
+          this.db.doc(`reviewResults/${reviewID}`).delete();
+        }
         this.snackBar.open('deleted', null, { duration: 1000 });
         // this.router.navigate(['/admin/employees']);
       } catch (e) {
@@ -111,10 +130,34 @@ export class EmployeesComponent implements OnInit {
       }
     }
   }
+
+  getStars(rating) {
+    // Get the value
+    var val = parseFloat(rating);
+    // Turn value into number/100
+    var size = (val / 5) * 100;
+    return size + '%';
+  }
+
+  getreview(employeeId) {
+    this.db
+      .collection('reviewResults')
+      .snapshotChanges()
+      .pipe(
+        map(actions => {
+          return actions.map(a => {
+            const data = a.payload.doc.data();
+            const id = a.payload.doc.id;
+            console.log({ id, ...data });
+            return { id, ...data };
+          });
+        })
+      );
+  }
 }
 
 @Component({
-  selector: 'dialog-overview-example-dialog',
+  selector: 'employee-name-dialog',
   template: `
     <h1 mat-dialog-title>{{ data.text }}</h1>
     <div mat-dialog-content>
@@ -141,12 +184,12 @@ export class EmployeesComponent implements OnInit {
     </div>
   `
 })
-export class DialogOverviewExampleDialog {
+export class EmployeeNameDialog {
   constructor(
     private db: AngularFirestore,
     private fb: FormBuilder,
-    public dialogRef: MatDialogRef<DialogOverviewExampleDialog>,
-    @Inject(MAT_DIALOG_DATA) public data: DialogData
+    public dialogRef: MatDialogRef<EmployeeNameDialog>,
+    @Inject(MAT_DIALOG_DATA) public data: EmployeeNameDialogData
   ) {}
 
   public newForm = new FormGroup({
@@ -181,6 +224,181 @@ export class DialogOverviewExampleDialog {
         .add(value)
         .then(ref => {
           console.log('Added document with ID: ', ref.id);
+          this.dialogRef.close();
+        });
+    }
+  }
+}
+
+@Component({
+  selector: 'employee-name-dialog',
+  template: `
+    <h1 mat-dialog-title>Select the rating</h1>
+    <div mat-dialog-content>
+      <form [formGroup]="reviewForm">
+        <div fxLayout="row wrap" fxLayoutAlign="space-between center">
+          <span>Quality and accuracy of work.</span>
+          <mat-form-field>
+            <mat-label>Quality</mat-label>
+            <mat-select formControlName="R1">
+              <mat-option>None</mat-option>
+              <mat-option *ngFor="let rate of rates" [value]="rate.value">
+                {{ rate.value }}
+              </mat-option>
+            </mat-select>
+          </mat-form-field>
+        </div>
+        <div fxLayout="row wrap" fxLayoutAlign="space-between center">
+          <span>Ability to meet established deadlines.</span>
+          <mat-form-field>
+            <mat-label>Speed</mat-label>
+            <mat-select formControlName="R2">
+              <mat-option>None</mat-option>
+              <mat-option *ngFor="let rate of rates" [value]="rate.value">
+                {{ rate.value }}
+              </mat-option>
+            </mat-select>
+          </mat-form-field>
+        </div>
+        <div fxLayout="row wrap" fxLayoutAlign="space-between center">
+          <span>Communication skills.</span>
+          <mat-form-field>
+            <mat-label>Communicate</mat-label>
+            <mat-select formControlName="R3">
+              <mat-option>None</mat-option>
+              <mat-option *ngFor="let rate of rates" [value]="rate.value">
+                {{ rate.value }}
+              </mat-option>
+            </mat-select>
+          </mat-form-field>
+        </div>
+        <div fxLayout="row wrap" fxLayoutAlign="space-between center">
+          <span>Collaboration skills and teamwork.</span>
+          <mat-form-field>
+            <mat-label>Teamwork</mat-label>
+            <mat-select formControlName="R4">
+              <mat-option>None</mat-option>
+              <mat-option *ngFor="let rate of rates" [value]="rate.value">
+                {{ rate.value }}
+              </mat-option>
+            </mat-select>
+          </mat-form-field>
+        </div>
+        <div fxLayout="row wrap" fxLayoutAlign="space-between center">
+          <span>Problem-solving skills.</span>
+          <mat-form-field>
+            <mat-label>Solve</mat-label>
+            <mat-select formControlName="R5">
+              <mat-option>None</mat-option>
+              <mat-option *ngFor="let rate of rates" [value]="rate.value">
+                {{ rate.value }}
+              </mat-option>
+            </mat-select>
+          </mat-form-field>
+        </div>
+        <div fxLayout="row wrap" fxLayoutAlign="space-between center">
+          <span>Attendance and dependability.</span>
+          <mat-form-field>
+            <mat-label>Dependability</mat-label>
+            <mat-select formControlName="R6">
+              <mat-option>None</mat-option>
+              <mat-option *ngFor="let rate of rates" [value]="rate.value">
+                {{ rate.value }}
+              </mat-option>
+            </mat-select>
+          </mat-form-field>
+        </div>
+      </form>
+    </div>
+    <div mat-dialog-actions>
+      <button mat-button (click)="onCancelClick()">Cancel</button>
+      <button mat-button (click)="onCreateClick()" color="primary">
+        Apply
+      </button>
+    </div>
+  `
+})
+export class ReviewDialog {
+  rates: Rate[] = [
+    { value: 5.0 },
+    { value: 4.5 },
+    { value: 4.0 },
+    { value: 3.5 },
+    { value: 3.0 },
+    { value: 2.5 },
+    { value: 2.0 },
+    { value: 1.5 },
+    { value: 1.0 },
+    { value: 0.5 },
+    { value: 0 }
+  ];
+
+  constructor(
+    private db: AngularFirestore,
+    private fb: FormBuilder,
+    public dialogRef: MatDialogRef<ReviewDialog>,
+    @Inject(MAT_DIALOG_DATA) public data: ReviewDialogData
+  ) {}
+
+  public reviewForm = new FormGroup({
+    R1: new FormControl('', []),
+    R2: new FormControl('', []),
+    R3: new FormControl('', []),
+    R4: new FormControl('', []),
+    R5: new FormControl('', []),
+    R6: new FormControl('', [])
+  });
+
+  ngOnInit() {
+    if (this.data.reviewID) {
+      console.log(this.data.reviewID);
+      let reviewRef = this.db
+        .collection('reviewResults')
+        .doc(this.data.reviewID);
+      let getDoc = reviewRef
+        .get()
+        .toPromise()
+        .then(doc => {
+          if (!doc.exists) {
+            console.log('No such document!');
+          } else {
+            console.log('Document data:', doc.data());
+            this.reviewForm = this.fb.group(doc.data());
+          }
+        })
+        .catch(err => {
+          console.log('Error getting document', err);
+        });
+    }
+  }
+
+  onCancelClick(): void {
+    this.dialogRef.close();
+  }
+  onCreateClick() {
+    if (this.data.reviewID) {
+      console.log(this.data.reviewID);
+      const value = this.reviewForm.value;
+      console.log(value);
+      let reviewRef = this.db
+        .collection('reviewResults')
+        .doc(this.data.reviewID);
+      let updateSingle = reviewRef.update(value);
+      this.dialogRef.close();
+    } else {
+      let value = this.reviewForm.value;
+      value['employeeID'] = this.data.employeeID;
+      value['reviewer'] = 'Admin';
+      console.log(value);
+      let addDoc = this.db
+        .collection('reviewResults')
+        .add(value)
+        .then(ref => {
+          console.log('Added document with ID: ', ref.id);
+          let employeeRef = this.db
+            .collection('employees')
+            .doc(this.data.employeeID);
+          let updateSingle = employeeRef.update({ reviewID: ref.id });
           this.dialogRef.close();
         });
     }

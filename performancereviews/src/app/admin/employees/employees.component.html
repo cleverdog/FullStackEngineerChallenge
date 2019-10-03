@@ -35,91 +35,146 @@
               Performance Reviews
             </mat-panel-title>
           </mat-expansion-panel-header>
-
-          <mat-form-field>
-            <input
-              class="full-width"
-              matInput
-              type="number"
-              step="0.5"
-              placeholder="#1"
-              min="0"
-              max="5"
-            />
-            <mat-hint align="start">Quality and accuracy of work.</mat-hint>
-          </mat-form-field>
-
-          <mat-form-field>
-            <input
-              class="full-width"
-              matInput
-              type="number"
-              step="0.5"
-              placeholder="#2"
-              min="0"
-              max="5"
-            />
-            <mat-hint align="start"
-              >Ability to meet established deadlines.</mat-hint
-            >
-          </mat-form-field>
-
-          <mat-form-field>
-            <input
-              class="full-width"
-              matInput
-              type="number"
-              step="0.5"
-              placeholder="#3"
-              min="0"
-              max="5"
-            />
-            <mat-hint align="start">Communication skills.</mat-hint>
-          </mat-form-field>
-
-          <mat-form-field>
-            <input
-              class="full-width"
-              matInput
-              type="number"
-              step="0.5"
-              placeholder="#4"
-              min="0"
-              max="5"
-            />
-            <mat-hint align="start"
-              >Collaboration skills and teamwork.</mat-hint
-            >
-          </mat-form-field>
-
-          <mat-form-field>
-            <input
-              class="full-width"
-              matInput
-              type="number"
-              step="0.5"
-              placeholder="#5"
-              min="0"
-              max="5"
-            />
-            <mat-hint align="start">Problem-solving skills.</mat-hint>
-          </mat-form-field>
-
-          <mat-form-field>
-            <input
-              class="full-width"
-              matInput
-              type="number"
-              step="0.5"
-              placeholder="#6"
-              min="0"
-              max="5"
-            />
-            <mat-hint align="start">Attendance and dependability.</mat-hint>
-          </mat-form-field>
-          <div class="button-wrapper">
-            <button mat-flat-button color="primary">Apply</button>
+          <div class="reviews" *ngIf="item.reviewID; else addReview">
+            <div align="center">
+              <div *ngIf="reviewItems | async as reviewItems">
+                <div *ngFor="let reviewItem of reviewItems">
+                  <div
+                    *ngIf="reviewItem.employeeID === item.id"
+                    class="stars-wrap"
+                  >
+                    <div
+                      fxLayout="row wrap"
+                      fxLayoutAlign="space-between center"
+                      class="star-row"
+                    >
+                      <span>Quality</span>
+                      <span
+                        *ngIf="reviewItem.R1; else R1None"
+                        class="stars alignright"
+                      >
+                        <span
+                          [ngStyle]="{ width: getStars(reviewItem.R1) }"
+                        ></span>
+                      </span>
+                      <ng-template #R1None>
+                        <span>-</span>
+                      </ng-template>
+                    </div>
+                    <div
+                      fxLayout="row wrap"
+                      fxLayoutAlign="space-between center"
+                      class="star-row"
+                    >
+                      <span>Speed</span>
+                      <span
+                        *ngIf="reviewItem.R2; else R2None"
+                        class="stars alignright"
+                      >
+                        <span
+                          [ngStyle]="{ width: getStars(reviewItem.R2) }"
+                        ></span>
+                      </span>
+                      <ng-template #R2None>
+                        <span>-</span>
+                      </ng-template>
+                    </div>
+                    <div
+                      fxLayout="row wrap"
+                      fxLayoutAlign="space-between center"
+                      class="star-row"
+                    >
+                      <span>Communicate</span>
+                      <span
+                        *ngIf="reviewItem.R3; else R3None"
+                        class="stars alignright"
+                      >
+                        <span
+                          [ngStyle]="{ width: getStars(reviewItem.R3) }"
+                        ></span>
+                      </span>
+                      <ng-template #R3None>
+                        <span>-</span>
+                      </ng-template>
+                    </div>
+                    <div
+                      fxLayout="row wrap"
+                      fxLayoutAlign="space-between center"
+                      class="star-row"
+                    >
+                      <span>Teamwork</span>
+                      <span
+                        *ngIf="reviewItem.R4; else R4None"
+                        class="stars alignright"
+                      >
+                        <span
+                          [ngStyle]="{ width: getStars(reviewItem.R4) }"
+                        ></span>
+                      </span>
+                      <ng-template #R4None>
+                        <span>-</span>
+                      </ng-template>
+                    </div>
+                    <div
+                      fxLayout="row wrap"
+                      fxLayoutAlign="space-between center"
+                      class="star-row"
+                    >
+                      <span>Solve</span>
+                      <span
+                        *ngIf="reviewItem.R5; else R5None"
+                        class="stars alignright"
+                      >
+                        <span
+                          [ngStyle]="{ width: getStars(reviewItem.R5) }"
+                        ></span>
+                      </span>
+                      <ng-template #R5None>
+                        <span>-</span>
+                      </ng-template>
+                    </div>
+                    <div
+                      fxLayout="row wrap"
+                      fxLayoutAlign="space-between center"
+                      class="star-row"
+                    >
+                      <span>Dependability</span>
+                      <span
+                        *ngIf="reviewItem.R6; else R6None"
+                        class="stars alignright"
+                      >
+                        <span
+                          ng-style="{ 'width': getStars(reviewItem.R6) }"
+                        ></span>
+                      </span>
+                      <ng-template #R6None>
+                        <span>-</span>
+                      </ng-template>
+                    </div>
+                  </div>
+                </div>
+                <button
+                  mat-flat-button
+                  color="primary"
+                  (click)="editReview(item.id, item.reviewID)"
+                >
+                  Edit
+                </button>
+              </div>
+            </div>
           </div>
+          <ng-template #addReview>
+            <div align="center">
+              <p>You haven't reviewed yet.</p>
+              <button
+                mat-flat-button
+                color="primary"
+                (click)="editReview(item.id, '')"
+              >
+                Add
+              </button>
+            </div>
+          </ng-template>
         </mat-expansion-panel>
         <mat-expansion-panel
           (opened)="panelOpenState = true"
@@ -153,7 +208,7 @@
           color="warn"
           aria-label=""
           fxFlex="20"
-          (click)="delete(item.id)"
+          (click)="delete(item.id, item.reviewID)"
         >
           <mat-icon>delete_outline</mat-icon>
         </button>
