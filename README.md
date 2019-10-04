@@ -1,6 +1,7 @@
 # Full Stack Developer Challenge
 
 This is a fullstack developer challenge from [here](https://github.com/Pay-Baymax/FullStackEngineerChallenge).
+This application dose not provide employee view.
 
 ## Using Technologies
 
@@ -43,4 +44,10 @@ webpack                           4.39.2
 ```sh
 $ npm install
 $ ng serve
+```
+
+## To execute a test
+
+```sh
+$ ng test
 ```
